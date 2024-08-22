@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- navbar component disini -->
-        <NavBar :name="userName" />
+        <NavBar :name="userName" :role="roleId" />
         
         <div class="container-fluid mt-5"> 
             <div class="row">
@@ -50,6 +50,7 @@ export default {
     data() {
         return {
             userName: "",
+            roleId: "",
             items: [],
             filteredItems: [],
             keyword: '',
