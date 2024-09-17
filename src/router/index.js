@@ -5,6 +5,9 @@ import OrderView from '../views/OrderView.vue'
 import ProductView from '../views/ProductView.vue'
 import ProductUpdateView from '../views/ProductUpdateView.vue'
 import ProductAddView from '../views/ProductAddView.vue'
+import OrderListView from '../views/OrderListView.vue'
+import OrderDetailView from '../views/OrderDetailView.vue'
+import OrderReportView from '../views/OrderReportView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,12 +24,32 @@ const router = createRouter({
       component: LoginView
     },
 
+// Route Order
     {
       path: '/order',
       name: 'order',
       component: OrderView
     },
+
+    {
+      path: '/order-list',
+      name: 'orderList',
+      component: OrderListView
+    },
     
+    {
+      path: '/order/:orderId',
+      name: 'orderDetail',
+      component: OrderDetailView,
+    },
+
+    {
+      path: '/order-report',
+      name: 'orderReport',
+      component: OrderReportView
+    },
+    
+// Route Product
     {
       path: '/product',
       name: 'product',
@@ -44,9 +67,7 @@ const router = createRouter({
       name: 'productEdit',
       component: ProductUpdateView,
     },
-    
-   
-    
+  
   ]
 })
 

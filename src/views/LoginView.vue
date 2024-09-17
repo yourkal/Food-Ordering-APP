@@ -11,16 +11,16 @@
             <div class="form-outline mb-4">
               <h1 class="text-center mb-4">Login</h1>
               <hr>
-              <label class="form-label" for="email">Email address</label>
+              <label class="form-label" for="email">Email</label>
               <input type="email" v-model="email" id="email" class="form-control form-control-lg"
-                placeholder="Enter a valid email address" required />
+                placeholder="Masukkan Email" required />
             </div>
 
             <!-- Password input -->
             <div class="form-outline mb-3">
               <label class="form-label" for="password">Password</label>
               <input type="password" v-model="password" id="password" class="form-control form-control-lg"
-                placeholder="Enter password" required />
+                placeholder="Masukkan Password" required />
             </div>
 
             <button @click="login" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;">

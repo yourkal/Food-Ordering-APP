@@ -47,9 +47,7 @@ export default {
             url: 'http://localhost/restaurant_order_api/public/storage/items/',
             name: '',
             price: '',
-            file: ''
-            
-           
+            file: ''        
         }
     },
 

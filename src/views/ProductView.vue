@@ -2,7 +2,7 @@
     <!-- navbar component disini -->
     <NavBar :name="userName" :role="roleId" />
     <div>
-        <div class="container mt-5  " >
+        <div class="container mt-3">
             <h2 class="text-center mb-3">Product List</h2>
             <RouterLink :to="{ name: 'productAdd' }" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add Product
@@ -24,7 +24,8 @@
                         <td>{{item.name}}</td>
                         <td>{{'Rp '+item.price}}</td>
                         <td>
-                            <img :src="url+item.image" class="product-image" />
+                            <img v-if="item.image" :src="url+item.image" class="product-image" />
+                            <img v-else src="@/assets/images/default-image.jpg" class="product-image" />
                         </td>
                         <td>
                             <RouterLink :to="{ name: 'productEdit', params: { productId: item.id }}">
@@ -32,14 +33,10 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </RouterLink>
-                            <RouterLink to="/delete-page">
-                                <button class="btn btn-sm btn-danger">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </RouterLink>
+                            <button class="btn btn-sm btn-danger" @click="deleteItem(item.id)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </td>
-
-
                     </tr>
                 </tbody>
             </table>
@@ -62,6 +59,7 @@
 <script>
 import NavBar from '@/components/NavBar.vue';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import router from '@/router';
 
 export default {
@@ -76,7 +74,7 @@ export default {
             items: [],
             url: 'http://localhost/restaurant_order_api/public/storage/items/',
             currentPage: 1,
-            itemsPerPage: 10
+            itemsPerPage: 5
         }
     },
 
@@ -116,10 +114,65 @@ export default {
                     this.items = response.data.data;
                 })
                 .catch((error) => {
+                    if(error.response.status == 401){
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('email');
+                        localStorage.removeItem('name');
+                        localStorage.removeItem('role_id');
+
+                        router.push({ name: 'login' });
+                    }
                     console.log(error);
                     console.log('Error get item');
                 });
         },
+        deleteItem(itemId) {
+    // Konfirmasi penghapusan dengan SweetAlert
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to delete this product?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Kirim permintaan penghapusan ke server
+            axios.delete(`http://localhost/restaurant_order_api/public/api/item/${itemId}`, {
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            .then((response) => {
+                if (response.status === 200 || response.status === 204) {
+                    // Jika penghapusan berhasil, perbarui daftar item
+                    this.items = this.items.filter(item => item.id !== itemId);
+                    Swal.fire(
+                        'Deleted!',
+                        'The product has been deleted.',
+                        'success'
+                    );
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'Failed to delete the product. Please try again.',
+                        'error'
+                    );
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                Swal.fire(
+                    'Error!',
+                    'Failed to delete the product.',
+                    'error'
+                );
+            });
+        }
+    });
+},
+
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
@@ -129,10 +182,11 @@ export default {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
             }
-        }
+        },
     }
 }
 </script>
+
 
 <style>
 .table {
